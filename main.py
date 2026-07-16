@@ -13,6 +13,48 @@ from openai import OpenAI
 from workspace import WorkspaceManager
 from sandbox import LocalSandboxManager
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enterprise Agent IDE</title>
+    <style>
+        body { background: #0d1117; color: #c9d1d9; font-family: sans-serif; display: flex; margin: 0; height: 100vh; }
+        #sidebar { width: 260px; background: #161b22; padding: 20px; border-right: 1px solid #30363d; }
+        #main { flex: 1; padding: 30px; }
+        .card { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 6px; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; cursor: pointer; background: #238636; color: white; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h3>PROJECT Explorer</h3>
+        <p>📁 models<br>📁 services<br>📁 tests</p>
+    </div>
+    <div id="main">
+        <h1>Enterprise Local Agent IDE Suite</h1>
+        <div class="card">
+            <h3 id="status">System Status: Loading...</h3>
+            <button class="btn" onclick="runTask()">Fire Build Sequence 🚀</button>
+        </div>
+        <div class="card">
+            <pre id="logs">Runtime Logs: Waiting for data...</pre>
+        </div>
+    </div>
+
+    <script>
+        // API se status fetch karo
+        async function updateStatus() {
+            const res = await fetch('/api/status');
+            const data = await res.json();
+            document.getElementById('status').innerText = "System Status: " + data.status;
+            document.getElementById('logs').innerText = "CPU Usage: " + data.cpu + "% \nRAM Usage: " + data.ram + "%";
+        }
+        setInterval(updateStatus, 3000);
+    </script>
+</body>
+</html>
 # Global states allocation
 LIVE_LOGS = [" Enterprise System Active. Multi-checkpoint versioning & structural engine online."]
 AGENT_STATUS = "System Ready - Monitoring Active Workspace"
