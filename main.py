@@ -14,7 +14,7 @@ from workspace import WorkspaceManager
 from sandbox import LocalSandboxManager
 
 # Global states allocation
-LIVE_LOGS = ["🚀 Enterprise System Active. Multi-checkpoint versioning & structural engine online."]
+LIVE_LOGS = [" Enterprise System Active. Multi-checkpoint versioning & structural engine online."]
 AGENT_STATUS = "System Ready - Monitoring Active Workspace"
 METRICS = {"execution_time": "0.0s", "loops_run": 0, "security_score": "N/A", "cpu": "0%", "memory": "0%"}
 HISTORY_FILE = "agent_history.json"

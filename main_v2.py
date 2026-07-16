@@ -1,4 +1,10 @@
 from flask import Flask, request, jsonify
+# Galti se bhi hardcoded paths mat use karo, hamesha tmp use karo
+import tempfile
+import os
+
+# AGAR FILE LIKHNI HAI:
+# path = os.path.join(tempfile.gettempdir(), 'data.txt')
 import os
 import psutil
 import json
