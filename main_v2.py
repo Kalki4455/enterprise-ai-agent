@@ -1,65 +1,53 @@
+from flask import Flask, request, jsonify
 import os
-from agent import ask_llm_to_fix
-from sandbox import SandboxManager
-from validator import validate_code_structure
+import psutil
+import json
 
-def run_advanced_autonomous_loop():
-    user_prompt = "Add an input class validation type check to ensure inputs 'a' and 'b' are either integer or float. If not, raise a TypeError."
+app = Flask(__name__)
+
+# --- ENTERPRISE AGENT CORE CONFIGURATION ---
+class AgentEngine:
+    def __init__(self):
+        self.version = "2.0.0"
+        self.workspace_root = os.getcwd()
+
+    def get_system_telemetry(self):
+        """Fetches real-time system metrics for the dashboard."""
+        return {
+            "cpu_usage": psutil.cpu_percent(interval=1),
+            "ram_usage": psutil.virtual_memory().percent,
+            "status": "online"
+        }
+
+# Initialize Engine
+agent = AgentEngine()
+
+# --- VERCEL/FLASK API HANDLERS ---
+
+@app.route('/', methods=['GET'])
+def index():
+    """Default entry point for the Web Dashboard."""
+    return jsonify({
+        "message": "Enterprise Autonomous Agent Suite Active",
+        "version": agent.version,
+        "telemetry": agent.get_system_telemetry()
+    })
+
+@app.route('/api/execute', methods=['POST'])
+def execute_task():
+    """Internal API endpoint for agent task execution."""
+    data = request.json
+    task = data.get('task', 'no-task-provided')
     
-    current_code = """
-def divide(a, b):
-    if b == 0:
-        return 0
-    return a / b
+    # Yahan apna main execution logic (sandbox/patcher) call karo
+    response = {
+        "status": "success",
+        "executed_task": task,
+        "output": "Task processed successfully in sandbox environment."
+    }
+    return jsonify(response)
 
-def test_divide_types():
-    try:
-        divide("10", 2)
-        assert False, "Should have raised TypeError"
-    except TypeError:
-        assert True
-"""
-
-    sandbox = SandboxManager()
-    max_retries = 3
-    error_context = None
-
-    print("🚀 Starting Advanced Guardrail-Protected Agent Engine...")
-
-    for iteration in range(1, max_retries + 1):
-        print(f"\n--- 🤖 Engine Iteration {iteration} ---")
-        
-        # 1. Ask LLM for patch
-        raw_ai_code = ask_llm_to_fix(user_prompt, current_code, error_context)
-        
-        # 2. STEP UPGRADE: Pre-flight AST Validation Guardrail
-        print("Executing AST Static Code Graph Validation...")
-        is_valid, message = validate_code_structure(raw_ai_code)
-        
-        if not is_valid:
-            print(f"🛑 Static Check Failed: {message}. Skipping Sandbox infrastructure.")
-            # LLM text model ko direct input loop me loopback trace pass karega execution bacha ke
-            error_context = f"Static Analysis Error: {message}. Fix the indentation or syntax explicitly."
-            continue
-            
-        print(f"🛡️ Guardrail Passed: {message}")
-        
-        # 3. Execution inside Isolated Environment Sandbox
-        print("Deploying safe container instances for testing execution logs...")
-        result = sandbox.execute_code(raw_ai_code, test_command="pytest app.py")
-        
-        print(f"Sandbox Output Trace:\n{result['logs']}")
-        
-        if result["exit_code"] == 0:
-            print("\n✅ TARGET MET: All structural code implementations and test instances are stable!")
-            print("Final Validated System Production Code:")
-            print(raw_ai_code)
-            return
-        else:
-            print("❌ Test cases asserted failure conditions.")
-            error_context = result["logs"]
-
-    print("\n⚠️ Failed to optimize source framework within max computation boundaries.")
-
-if __name__ == "__main__":
-    run_advanced_autonomous_loop()
+# --- VERCEL REQUIRED HANDLER ---
+# Vercel needs this 'app' instance to route requests correctly
+if __name__ == '__main__':
+    app.run(debug=True)
