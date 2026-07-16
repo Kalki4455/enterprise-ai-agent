@@ -1,0 +1,10 @@
+# Local Agent Temporary Workspace
+local_workspace/
+agent_history.json
+
+# Python environments & cache
+__pycache__/
+*.pyc
+.venv/
+env/
+.pytest_cache/
